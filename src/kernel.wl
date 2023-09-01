@@ -1,0 +1,1 @@
+SlideEvent := StringTemplate["(*RVJS ``*)"][id]

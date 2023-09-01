@@ -1,0 +1,9 @@
+.cell-type-slide {
+    background-color: hsl(191, 100%, 79%);
+    color: rgba(55, 53, 47, 0.5);
+  }
+
+.cell-type-slides {
+    background-color: hsl(311, 100%, 79%);
+    color: rgba(58, 28, 60, 0.5);
+  }  

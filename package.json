@@ -1,0 +1,30 @@
+{
+  "name": "wljs-revealjs",
+  "version": "0.0.1",
+  "description": "Presentation support based on RevealJS and Hydrator",
+  "scripts": {
+    "build": "node --max-old-space-size=8192 ./node_modules/.bin/rollup --config rollup.config.mjs"
+  },
+  "wljs-meta": {
+    "jsmodule": "dist/kernel.js",
+    "wl": "src/processor.wl",
+    "wlkernel": "src/kernel.wl",
+    "styles": [
+      "src/style.css",
+      "dist/reveal.css"
+    ],
+    "priority": 999
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JerryI/wljs-revealjs"
+  },
+  "dependencies": {
+    "reveal.js": "^4.5.0",
+    "reveal.js-math": "^1.0.0",
+    "rollup": "^3.21.6"
+  },
+  "resolutions": {
+    "@babel/preset-env": "7.13.8"
+  }
+}
