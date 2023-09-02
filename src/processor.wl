@@ -24,8 +24,15 @@ RJXProcessor2[expr_String, signature_String, callback_] := Module[{str = StringD
   RJXEvaluator[str, signature, callback];
 ];
 
+MTrimmer = Function[str, 
+StringReplace[str, {
+  RegularExpression["\\A([\\n|\\t|\\r| ]*)([\\w|:|\\$|#|\\-|\\[|\\]|!|\\*|_|\\/|.|\\d]?)"] :> If[StringLength["$2"]===0, "", "$1"<>"$2"],
+  RegularExpression["([\\w|\\$|#|*|\\*|\\-|\\[|!|\\]|:|\\/|.|\\d]?)([\\r|\\n| |\\t]*)\\Z"] :> If[StringLength["$1"]===0, "", "$1"<>"$2"]
+}]
+];
+
 If[KeyExistsQ[JerryI`WolframJSFrontend`Packages`Packages, "wljs-wlx-support"],
-  RJXEvaluator[str_, signature_, callback_] := JerryI`WolframJSFrontend`Notebook`Notebooks[signature]["kernel"][JerryI`WolframJSFrontend`Evaluator`WLXEvaluator["<dummy>"<>str<>"</dummy>", signature, "slide", "Trimmer"->Identity], callback, "Link"->"WSTP"]
+  RJXEvaluator[str_, signature_, callback_] := JerryI`WolframJSFrontend`Notebook`Notebooks[signature]["kernel"][JerryI`WolframJSFrontend`Evaluator`WLXEvaluator["<dummy>"<>str<>"</dummy>", signature, "slide", "Trimmer"->MTrimmer], callback, "Link"->"WSTP"]
 ,
   RJXEvaluator[str_, signature_, callback_] := JerryI`WolframJSFrontend`Notebook`Notebooks[signature]["kernel"][JerryI`WolframJSFrontend`Evaluator`TemplateEvaluator[str, signature, "slide"], callback, "Link"->"WSTP"];
 ];

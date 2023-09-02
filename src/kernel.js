@@ -22,6 +22,7 @@ class RevealJSCell {
         // If you set this to 'focused', we will only capture keyboard events
         // for embedded decks when they are in focus
         keyboardCondition: null,
+        slideNumber: true,
         plugins: [ Markdown, KaTeX ]
       } );
 
@@ -39,7 +40,7 @@ class RevealJSCell {
 
       parent.element.classList.add('padding-fix');
 
-      parent.element.style.height = "500px";
+      //parent.element.style.height = "500px";
 
       let string = `
       <section data-markdown>
