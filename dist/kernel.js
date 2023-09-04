@@ -26,8 +26,11 @@ class RevealJSCell {
     ref = []
 
     dispose() {
+
       console.warn('slide got disposed!');
       this.ref.forEach((e) => e.dispose());
+
+      this.deck.destroy();
     }
     
     constructor(parent, data) {
@@ -150,6 +153,8 @@ class RevealJSCell {
           fragmentFire(state.indexh, state.indexf);
         }
       } );
+
+      
       
       slides.innerHTML = string;
 
@@ -175,6 +180,8 @@ class RevealJSCell {
           self.ref.push(fobj);          
         }, (i+1) * 200);
       });
+
+      this.deck = deck;
 
       return this;
     }
