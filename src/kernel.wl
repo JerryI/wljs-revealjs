@@ -1,1 +1,1 @@
-SlideEvent := StringTemplate["(*RVJS ``*)"][id]
+SlideEvent := StringTemplate["RVJSEvent[\"``\"]"][id]

@@ -52,7 +52,7 @@ class RevealJSCell {
 
       const r = {
         scripts: new RegExp(/\<(?:[^:]+:)?script\>.*?\<\/(?:[^:]+:)?script\>/gm),
-        events: new RegExp(/\(\*RVJS [^\(\*RVJS]*\*\)/gm),
+        events: new RegExp(/RVJSEvent\["([^"]+)"\]/g),
         fe: new RegExp(/FrontEndExecutable\["([^"]+)"\]/g)
       };
       
@@ -70,9 +70,14 @@ class RevealJSCell {
       //string.match(new RegExp(/---\n/gm)).length
       
       const eventReplacer = (arr) => {
-        return function (match, index) {
-        
-        arr[string.slice(0, index).match(new RegExp(/---\n/gm)).length] = match.slice(7,-2)
+        return function (match, a,b,c) {
+
+  
+        let narray = string.slice(0, b).match(new RegExp(/---\n/gm));
+          
+        if (!Array.isArray(narray)) narray = [];
+          
+        arr[narray.length] = match.slice(11,-2);
         return '';
         }
       }
@@ -108,10 +113,22 @@ class RevealJSCell {
 
       } );
 
+      let blocked = false;
+
+      const fragmentFire = (x,y) => {
+        if (blocked) return;
+        blocked = true;
+        setTimeout(()=>{
+          blocked = false
+        }, 100);
+        server.emitt(events[x]+'-fragment-'+String(y+1), y)
+      };
+
       deck.on( 'fragmentshown', event => {
         const state = deck.getState();
+   
         if (state.indexh in events) {
-          server.emitt(events[state.indexh]+'-fragment', state.indexf);
+          fragmentFire(state.indexh, state.indexf);
         }
       } );
       
