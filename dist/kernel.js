@@ -75,7 +75,8 @@ class RevealJSCell {
       const r = {
         scripts: new RegExp(/\<(?:[^:]+:)?script\>.*?\<\/(?:[^:]+:)?script\>/gm),
         events: new RegExp(/RVJSEvent\["([^"]+)"\]/g),
-        fe: new RegExp(/FrontEndExecutable\["([^"]+)"\]/g)
+        fe: new RegExp(/FrontEndExecutable\["([^"]+)"\]/g),
+        feh: new RegExp(/FrontEndExecutableHold\["([^"]+)"\]/g)
       };
       
       const scripts = [];
@@ -104,9 +105,9 @@ class RevealJSCell {
         }
       };
 
-      const feReplacer = (fe) => {
+      const feReplacer = (fe, offset=0) => {
         return function (match, index) {
-          const uid = match.slice(20,-2);
+          const uid = match.slice(20 + offset,-2);
           fe.push(uid);
           return `<div id="${uid}" class="slide-frontend-object"></div>`;
         }
@@ -122,6 +123,7 @@ class RevealJSCell {
 
       //extract FE objects
       string = string.replace(r.fe, feReplacer(fe));
+      string = string.replace(r.feh, feReplacer(fe, 4));
 
       deck.on( 'slidechanged', event => {
         // event.previousSlide, event.currentSlide, event.indexh, event.indexv
