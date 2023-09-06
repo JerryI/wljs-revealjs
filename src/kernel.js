@@ -1,6 +1,8 @@
 import Reveal from 'reveal.js';
 import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
 
+import {RevealPointer} from './pointer/pointer.js'
+
 import KaTeX from 'reveal.js/plugin/math/math.esm.js'
 
 class RevealJSCell {
@@ -26,7 +28,15 @@ class RevealJSCell {
         // for embedded decks when they are in focus
         keyboardCondition: null,
         slideNumber: true,
-        plugins: [ Markdown, KaTeX ]
+        plugins: [ Markdown, KaTeX, RevealPointer ],
+        pointer: {
+          key: "q", // key to enable pointer, default "q", not case-sensitive
+          color: "red", // color of a cursor, default "red" any valid CSS color
+          opacity: 0.8, // opacity of cursor, default 0.8
+          pointerSize: 12, // pointer size in px, default 12
+          alwaysVisible: false, // should pointer mode be always visible? default "false"
+          tailLength: 10, // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
+        }
       } );
 
       const container = document.createElement('div');
