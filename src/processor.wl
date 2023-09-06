@@ -7,7 +7,7 @@ RJXProcessor[expr_String, signature_String, callback_] := Module[{str = StringDr
   RJXEvaluator[str, signature, callback];
 ];
 
-RJXQ[str_]      := Length[StringCases[StringSplit[str, "\n"] // First, RegularExpression["^\\.(slide)$"]]] > 0;
+RJXQ[str_]      := If[StringLength[str] > 8, Length[StringCases[StringSplit[str, "\n"] // First, RegularExpression["^\\.(slide)$"]]] > 0, False];
 
 JerryI`WolframJSFrontend`Notebook`NotebookAddEvaluator[(RJXQ      ->  <|"SyntaxChecker"->(True&),               "Epilog"->(#&),             "Prolog"->(#&), "Evaluator"->RJXProcessor       |>), "HighestPriority"];
 
@@ -16,7 +16,7 @@ RJXQ2[str_]      := Length[StringCases[StringSplit[str, "\n"] // First, RegularE
 RJXProcessor2[expr_String, signature_String, callback_] := Module[{str = StringDrop[expr, StringLength[First[StringSplit[expr, "\n"]]] ]},
   Print["RJXProcessor2 All slides!"];
   (* find all cells with slides *)
-  str = {str, Function[i, StringDrop[i["data"], StringLength[First[StringSplit[i["data"], "\n"]]]] ] /@ Select[JerryI`WolframJSFrontend`Cells`CellList[signature], (RJXQ[#["data"]] && #["type"]==="input") &]};
+  str = {Function[i, StringDrop[i["data"], StringLength[First[StringSplit[i["data"], "\n"]]]] ] /@ Select[JerryI`WolframJSFrontend`Cells`CellList[signature], (RJXQ[#["data"]] && #["type"]==="input") &], str};
   str = StringRiffle[str//Flatten, "\n---\n"];
   Print["Full string is"];
   Print[str];
