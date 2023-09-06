@@ -1,6 +1,6 @@
 {
   "name": "wljs-revealjs",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Presentation support based on RevealJS and Hydrator",
   "scripts": {
     "build": "node --max-old-space-size=8192 ./node_modules/.bin/rollup --config rollup.config.mjs"
@@ -10,8 +10,10 @@
     "wl": "src/processor.wl",
     "wlkernel": "src/kernel.wl",
     "styles": [
-      "src/style.css",
-      "dist/reveal.css"
+      "dist/reveal.css",
+      "src/styles.css",
+      "src/drawer/drawer.css",
+      "src/pointer/pointer.css"
     ],
     "priority": 999
   },

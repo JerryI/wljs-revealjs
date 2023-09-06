@@ -2,6 +2,7 @@ import Reveal from 'reveal.js';
 import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
 
 import {RevealPointer} from './pointer/pointer.js'
+import {RevealDrawer} from './drawer/drawer.js'
 
 import KaTeX from 'reveal.js/plugin/math/math.esm.js'
 
@@ -28,7 +29,7 @@ class RevealJSCell {
         // for embedded decks when they are in focus
         keyboardCondition: null,
         slideNumber: true,
-        plugins: [ Markdown, KaTeX, RevealPointer ],
+        plugins: [ Markdown, KaTeX, RevealPointer, RevealDrawer(self) ],
         pointer: {
           key: "q", // key to enable pointer, default "q", not case-sensitive
           color: "red", // color of a cursor, default "red" any valid CSS color
@@ -36,6 +37,14 @@ class RevealJSCell {
           pointerSize: 12, // pointer size in px, default 12
           alwaysVisible: false, // should pointer mode be always visible? default "false"
           tailLength: 10, // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
+        },
+
+        drawer: {
+          toggleDrawKey: "d", // (optional) key to enable drawing, default "d"
+          toggleBoardKey: "t", // (optional) key to show drawing board, default "t"
+          colors: ["#fa1e0e", "#8ac926", "#1982c4", "#ffca3a"], // (optional) list of colors avaiable (hex color codes)
+          color: "#FF0000", // (optional) color of a cursor, first color from `codes` is a default
+          pathSize: 4, // (optional) path size in px, default 4
         }
       } );
 
@@ -156,7 +165,7 @@ class RevealJSCell {
 
       setInnerHTML(scriptHolder, scripts.join(''));
       
-      
+      this.deck = deck;
 
       deck.initialize();
 
@@ -174,7 +183,7 @@ class RevealJSCell {
         }, (i+1) * 200)
       });
 
-      this.deck = deck;
+      
 
       return this;
     }

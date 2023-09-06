@@ -7,6 +7,8 @@ __Alpha preview__
 
 The core library is [RevealJS](https://revealjs.com), that is running in Markdown mode.
 
+![](imgs/ezgif.com-optimize-15.gif)
+
 ## Making slides using Markdown
 
 To create a slide type in a new cell
@@ -64,13 +66,22 @@ Or even some graphics, like
 
 ![](imgs/Screenshot%202023-09-01%20at%2018.41.08.png)
 
+## Plugins
+The package uses also external plugins 
+- [pointer](https://github.com/burnpiro/reveal-pointer) (use `q` to toggle)
+- [drawing board](https://github.com/burnpiro/reveal-drawer) (use `t` to toggle the board and then `d` to draw)
+
 ## Installation
 Clone this repository to the `Packages` folder of the frontend. To locate it, use
 ```mathematica
 FrontEndDirectory[]
 ``` 
 
-or wait until the official release and it will be the part of core libraries of the frontend.
+or just open `Settings` and paste a link into the installation text-field
+
+```
+https://github.com/JerryI/wljs-revealjs
+```
 
 ## License
 Project is released under the GNU General Public License (GPL).
