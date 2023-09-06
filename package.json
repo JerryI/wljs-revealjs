@@ -11,7 +11,7 @@
     "wlkernel": "src/kernel.wl",
     "styles": [
       "dist/reveal.css",
-      "src/styles.css",
+      "src/style.css",
       "src/drawer/drawer.css",
       "src/pointer/pointer.css"
     ],
