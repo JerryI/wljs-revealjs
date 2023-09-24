@@ -7,3 +7,12 @@
     background-color: hsl(311, 100%, 79%);
     color: rgba(58, 28, 60, 0.5);
   }  
+
+.slide-number {
+    bottom: 0;
+    position: absolute;
+    font-size: medium;
+    right: 0;
+    margin-right: 1em;
+    margin-bottom: 0.5em;
+}
