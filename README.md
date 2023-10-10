@@ -9,6 +9,10 @@ The core library is [RevealJS](https://revealjs.com), that is running in Markdow
 
 ![](imgs/ezgif.com-optimize-15.gif)
 
+see the full demo
+
+![full demo](https://youtu.be/7cEYJG7nk7U?si=IzYInhddG66pNUHp)
+
 ## Making slides using Markdown
 
 To create a slide type in a new cell
