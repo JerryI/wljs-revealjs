@@ -74,16 +74,7 @@ The package uses also external plugins
 - [drawing board](https://github.com/burnpiro/reveal-drawer) (use `t` to toggle the board and then `d` to draw)
 
 ## Installation
-Clone this repository to the `Packages` folder of the frontend. To locate it, use
-```mathematica
-FrontEndDirectory[]
-``` 
-
-or just open `Settings` and paste a link into the installation text-field
-
-```
-https://github.com/JerryI/wljs-revealjs
-```
+already a core component!
 
 ## License
 Project is released under the GNU General Public License (GPL).
