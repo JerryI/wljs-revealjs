@@ -81,7 +81,12 @@ class RevealJSCell {
       
 
       parent.element.classList.add('padding-fix');
-
+function unicodeToChar(text) {
+  return text.replace(/\\:[\da-f]{4}/gi, 
+         function (match) {
+              return String.fromCharCode(parseInt(match.replace(/\\:/g, ''), 16));
+         });
+};
       //parent.element.style.height = "500px";
 
       let string = `
@@ -178,7 +183,7 @@ class RevealJSCell {
 
       
       
-      slides.innerHTML = string;
+      slides.innerHTML = unicodeToChar(string);
 
       const scriptHolder = document.createElement('div');
       parent.element.appendChild(scriptHolder);
