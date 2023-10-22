@@ -6,6 +6,13 @@ import {RevealDrawer} from './drawer/drawer.js'
 
 import KaTeX from 'reveal.js/plugin/math/math.esm.js'
 
+function unicodeToChar(text) {
+  return text.replace(/\\:[\da-f]{4}/gi, 
+         function (match) {
+              return String.fromCharCode(parseInt(match.replace(/\\:/g, ''), 16));
+         });
+};
+
 class RevealJSCell {
     ref = []
 
@@ -158,7 +165,7 @@ class RevealJSCell {
 
       
       
-      slides.innerHTML = string;
+      slides.innerHTML = unicodeToChar(string);
 
       const scriptHolder = document.createElement('div');
       parent.element.appendChild(scriptHolder);
