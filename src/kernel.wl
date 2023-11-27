@@ -1,1 +1,3 @@
-SlideEvent := StringTemplate["RVJSEvent[\"``\"]"][id]
+SlideEvent[OptionsPattern[]] := StringTemplate["RVJSEvent[\"``\"]"][OptionValue["id"]]
+
+Options[SlideEvent] = {"id"->"default-slide-event"}
