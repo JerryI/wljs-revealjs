@@ -9,9 +9,8 @@
   },
   "defaultPackage": true,
   "wljs-meta": {
-    "jsmodule": "dist/kernel.js",
-    "wl": "src/processor.wl",
-    "wlkernel": "src/kernel.wl",
+    "frontend": "src/Frontend.wl",
+    "js": "dist/kernel.js",
     "styles": [
       "dist/reveal.css",
       "src/style.css",
