@@ -116,11 +116,12 @@ class RevealJSCell {
         return function (match, index) {
           const uid = match.slice(19 + offset,-1);
           fe.push(uid);
-          return `<div id="${uid}" class="slide-frontend-object"></div>`;
+          return `<div id="slide-${uid}" class="slide-frontend-object"></div>`;
         }
       }
-
-      string = string.replace('<dummy>', '').replace('</dummy>', '');
+      
+    
+      string = string.replace('<dummy >', '').replace('</dummy>', '');
 
       //extract scripts
       string = string.replace(r.scripts, replacer(scripts));
@@ -152,7 +153,7 @@ class RevealJSCell {
         setTimeout(()=>{
           blocked = false;
         }, 100);
-        server.emitt(events[x]+'-fragment-'+String(y+1), y)
+        server.kernel.emitt(events[x]+'-fragment-'+String(y+1), y)
       };
 
       deck.on( 'fragmentshown', event => {
@@ -166,6 +167,7 @@ class RevealJSCell {
       
       
       slides.innerHTML = unicodeToChar(string);
+  
 
       const scriptHolder = document.createElement('div');
       parent.element.appendChild(scriptHolder);
@@ -176,19 +178,46 @@ class RevealJSCell {
 
       deck.initialize();
 
-      fe.forEach((obj, i) => {
-        setTimeout(async () => {
+      const runOverFe = async function () {
+        for (const uid of fe) {
+
           const cuid = Date.now() + Math.floor(Math.random() * 10009);
           var global = {call: cuid};
+
+          console.warn('loading executable on a slide...');
+          console.log(uid);
+          console.log(document.getElementById(`slide-${uid}`));
+          
       
-          let env = {global: global, element: document.getElementById(obj)}; //Created in CM6
-          console.log("CM6: creating an object with key "+this.name);
-          const fobj = new ExecutableObject(obj, env);
-          fobj.execute()     
+          let env = {global: global, element: document.getElementById(`slide-${uid}`)}; 
+          console.log("Slides: creating an object");
+
+
+          console.log('forntend executable');
+
+          let obj;
+          console.log('check cache');
+          if (ObjectHashMap[uid]) {
+              obj = ObjectHashMap[uid];
+          } else {
+              obj = new ObjectStorage(uid);
+          }
+          console.log(obj);
       
-          self.ref.push(fobj);          
-        }, (i+1) * 200)
-      });
+          const copy = {...env};
+          const store = await obj.get();
+          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
+          instance.assignScope(copy);
+          obj.assign(instance);
+      
+          instance.execute();          
+      
+          self.ref.push(instance);          
+      };
+    };
+
+      //FIXME must be an a sideeffect after slide was mounted
+      setTimeout(runOverFe, 300);
 
       
 
