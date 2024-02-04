@@ -85,7 +85,7 @@ class RevealJSCell {
       parent.element.appendChild(container);
 
       
-
+      if (!core._isWindow) parent.element.classList.add('reveal-fixed-height');
       parent.element.classList.add('padding-fix');
 
       //parent.element.style.height = "500px";

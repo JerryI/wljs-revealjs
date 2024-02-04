@@ -10,6 +10,7 @@
   "defaultPackage": true,
   "wljs-meta": {
     "frontend": "src/Frontend.wl",
+    "kernel": "src/Kernel.wl",
     "js": "dist/kernel.js",
     "styles": [
       "dist/reveal.css",

@@ -1,7 +1,3 @@
-PacletRepositories[{
-    Github -> "https://github.com/JerryI/wl-wlx" -> "dev"
-}, "Directory" -> FileNameJoin[{Directory[], "__localkernel", "revealjs-support"}] ];
-
 BeginPackage["Notebook`Editor`SlidesTools`", {
     "JerryI`Notebook`Kernel`", 
     "JerryI`Notebook`Transactions`",
