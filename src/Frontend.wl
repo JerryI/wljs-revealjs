@@ -8,12 +8,12 @@ BeginPackage["Notebook`Editor`RevealProcessor`", {
 
 Begin["`Internal`"]
 
-Q[t_Transaction] := (StringMatchQ[t["Data"], ".slide\n"~~___] )
+Q[t_Transaction] := (StringMatchQ[t["Data"], ".slide\n"~~___] || StringMatchQ[t["Data"], ".slides\n"~~___] )
 
 rootFolder = $InputFileName // DirectoryName;
 
 
-evaluator  = StandardEvaluator["Name" -> "RevealJS Evaluator", "InitKernel" -> init, "Pattern" -> (_?Q), "Priority"->(12)];
+evaluator  = StandardEvaluator["Name" -> "RevealJS Evaluator", "InitKernel" -> init, "Pattern" -> (_?Q), "Priority"->(3)];
 
     StandardEvaluator`ReadyQ[evaluator, k_] := (
         If[! TrueQ[k["ReadyQ"] ] || ! TrueQ[k["ContainerReadyQ"] ],
@@ -53,11 +53,28 @@ evaluator  = StandardEvaluator["Name" -> "RevealJS Evaluator", "InitKernel" -> i
 
 StandardEvaluator`Evaluate[evaluator, k_, t_] := Module[{list},
     t["Evaluator"] = Notebook`RevealEvaluator;
-    t["Data"] = "<dummy>"<>StringDrop[t["Data"], 7]<>"</dummy>";
 
-    StandardEvaluator`Print[evaluator, "Kernel`Submit!"];
-    Kernel`Submit[k, t];    
-];  
+    If[StringMatchQ[t["Data"], ".slides\n"~~___],
+        StandardEvaluator`Print[evaluator, "Multiples slides will be merged"];
+
+        t["Data"] = "<dummy>"<>StringRiffle[{Map[
+            Function[cell,
+                StringDrop[cell["Data"], 7]
+            ]
+        , 
+            Select[Notebook`HashMap[ t["EvaluationContext", "Notebook"] ]["Cells"], (StringMatchQ[#["Data"], ".slide\n"~~___] && InputCellQ[#])& ] 
+        ], StringDrop[t["Data"], 8]} // Flatten, "\n---\n"]<>"</dummy>";
+
+        StandardEvaluator`Print[evaluator, "Kernel`Submit!"];
+        Kernel`Submit[k, t]; 
+    ,
+        t["Data"] = "<dummy>"<>StringDrop[t["Data"], 7]<>"</dummy>";
+
+        StandardEvaluator`Print[evaluator, "Kernel`Submit!"];
+        Kernel`Submit[k, t];     
+    ]   
+];
+
 
 init[k_] := Module[{},
     Print["Kernel init..."];
