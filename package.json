@@ -18,7 +18,8 @@
       "src/drawer/drawer.css",
       "src/pointer/pointer.css"
     ],
-    "priority": 999
+    "priority": 999,
+    "category": "Cell types"
   },
   "repository": {
     "type": "git",
