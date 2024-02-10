@@ -3,7 +3,8 @@ BeginPackage["Notebook`Editor`SlidesTools`", {
     "JerryI`Notebook`Transactions`",
     "JerryI`Misc`Events`",
     "JerryI`WLX`",
-    "JerryI`WLX`Importer`"
+    "JerryI`WLX`Importer`",
+    "Notebook`Editor`FrontendObject`"
 }];
 
 Begin["`Private`"]
@@ -26,16 +27,16 @@ Notebook`RevealEvaluator = Function[t,
 
 
 ExpressionReplacements = {
-    Graphics[opts__] :> Global`CreateFrontEndObject[Graphics[opts]], 
-    Graphics3D[opts__] :> Global`CreateFrontEndObject[Graphics3D[opts]], 
-    Image[opts__] :> Global`CreateFrontEndObject[Image[opts]]
+    Graphics[opts__] :> CreateFrontEndObject[Graphics[opts]], 
+    Graphics3D[opts__] :> CreateFrontEndObject[Graphics3D[opts]], 
+    Image[opts__] :> CreateFrontEndObject[Image[opts]]
 };
 
-JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "view"], Global`CreateFrontEndObject[ assoc["view"]], EventObject[assoc] ]
+JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "view"], CreateFrontEndObject[ assoc["view"]], EventObject[assoc] ]
 JerryI`WLX`Private`IdentityTransform[x_] := x /. ExpressionReplacements
 
-ListLinePlotly /: JerryI`WLX`Private`IdentityTransform[ListLinePlotly[args__]] := Global`CreateFrontEndObject[ListLinePlotly[args]]
-ListPlotly /: JerryI`WLX`Private`IdentityTransform[ListPlotly[args__]] := Global`CreateFrontEndObject[ListPlotly[args]]
+ListLinePlotly /: JerryI`WLX`Private`IdentityTransform[ListLinePlotly[args__]] := CreateFrontEndObject[ListLinePlotly[args]]
+ListPlotly /: JerryI`WLX`Private`IdentityTransform[ListPlotly[args__]] := CreateFrontEndObject[ListPlotly[args]]
 
 End[]
 
