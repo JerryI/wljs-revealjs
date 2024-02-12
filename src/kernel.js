@@ -14,12 +14,18 @@ function unicodeToChar(text) {
 };
 
 class RevealJSCell {
-    ref = []
+    envs = []
 
     dispose() {
 
       console.warn('slide got disposed!');
-      this.ref.forEach((e) => e.dispose());
+      console.warn('WLX cell dispose...');
+      for (const env of this.envs) {
+        for (const obj of Object.values(env.global.stack))  {
+          console.log('dispose');
+          obj.dispose();
+        }
+      }
 
       this.deck.destroy();
     }
@@ -176,7 +182,7 @@ class RevealJSCell {
       
       this.deck = deck;
 
-      deck.initialize();
+      
 
       const runOverFe = async function () {
         for (const uid of fe) {
@@ -204,7 +210,7 @@ class RevealJSCell {
           }
           console.log(obj);
       
-          const copy = {...env};
+          const copy = env;
           const store = await obj.get();
           const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
           instance.assignScope(copy);
@@ -212,14 +218,14 @@ class RevealJSCell {
       
           instance.execute();          
       
-          self.ref.push(instance);          
+          self.envs.push(env);          
       };
     };
 
       //FIXME must be an a sideeffect after slide was mounted
-      setTimeout(runOverFe, 300);
+      //setTimeout(runOverFe, 300);
 
-      
+      deck.initialize().then(() => runOverFe());
 
       return this;
     }

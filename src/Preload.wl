@@ -32,7 +32,7 @@ ExpressionReplacements = {
     Image[opts__] :> CreateFrontEndObject[Image[opts]]
 };
 
-JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "view"], CreateFrontEndObject[ assoc["view"]], EventObject[assoc] ]
+JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "View"], CreateFrontEndObject[ assoc["View"]], EventObject[assoc] ]
 JerryI`WLX`Private`IdentityTransform[x_] := x /. ExpressionReplacements
 
 ListLinePlotly /: JerryI`WLX`Private`IdentityTransform[ListLinePlotly[args__]] := CreateFrontEndObject[ListLinePlotly[args]]
