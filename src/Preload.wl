@@ -30,7 +30,7 @@ ExpressionReplacements = {
     Graphics[opts__] :> CreateFrontEndObject[Graphics[opts]], 
     Graphics3D[opts__] :> CreateFrontEndObject[Graphics3D[opts]], 
     Image[opts__] :> CreateFrontEndObject[Image[opts]]
-};
+} // Quiet;
 
 JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "View"], CreateFrontEndObject[ assoc["View"]], EventObject[assoc] ]
 JerryI`WLX`Private`IdentityTransform[x_] := x /. ExpressionReplacements
