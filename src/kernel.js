@@ -42,7 +42,7 @@ class RevealJSCell {
         // for embedded decks when they are in focus
         keyboardCondition: null,
         slideNumber: true,
-        plugins: [ Markdown, KaTeX, RevealPointer, RevealDrawer(self) ],
+        plugins: [ Markdown, KaTeX, RevealPointer /*, RevealDrawer(self)*/ ],
         pointer: {
           key: "q", // key to enable pointer, default "q", not case-sensitive
           color: "red", // color of a cursor, default "red" any valid CSS color
@@ -50,7 +50,7 @@ class RevealJSCell {
           pointerSize: 12, // pointer size in px, default 12
           alwaysVisible: false, // should pointer mode be always visible? default "false"
           tailLength: 10, // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
-        },
+        }/*,
 
         drawer: {
           toggleDrawKey: "d", // (optional) key to enable drawing, default "d"
@@ -58,7 +58,7 @@ class RevealJSCell {
           colors: ["#fa1e0e", "#8ac926", "#1982c4", "#ffca3a"], // (optional) list of colors avaiable (hex color codes)
           color: "#FF0000", // (optional) color of a cursor, first color from `codes` is a default
           pathSize: 4, // (optional) path size in px, default 4
-        }
+        }*/
       } );
 
       const container = document.createElement('div');
@@ -133,7 +133,9 @@ class RevealJSCell {
       string = string.replace(r.scripts, replacer(scripts));
 
       //extract events
+      console.log(string);
       string = string.replace(r.events, eventReplacer(events));
+      console.log(events);
 
       //extract FE objects
       string = string.replace(r.fe, feReplacer(fe));
@@ -145,8 +147,10 @@ class RevealJSCell {
         console.log(slide);
         if (event.previousSlide == event.currentSlide) return;
 
-          if (slide in events) {
-            server.emitt(events[slide], slide);
+        console.log(Object.keys(events).includes(String(slide)));
+          if (Object.keys(events).includes(String(slide))) {
+            console.log(events[slide]);
+            server.kernel.emitt(events[slide], slide);
           }
 
       } );
@@ -159,13 +163,15 @@ class RevealJSCell {
         setTimeout(()=>{
           blocked = false;
         }, 100);
-        server.kernel.emitt(events[x]+'-fragment-'+String(y+1), y)
+        server.kernel.emitt(events[x]+'-fragment-'+String(y+1), y);
+        console.log('fragment fire!');
+        console.log(events[x]+'-fragment-'+String(y+1));
       };
 
       deck.on( 'fragmentshown', event => {
         const state = deck.getState();
    
-        if (state.indexh in events) {
+        if (Object.keys(events).includes(String(state.indexh))) {
           fragmentFire(state.indexh, state.indexf);
         }
       } );

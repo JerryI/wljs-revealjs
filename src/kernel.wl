@@ -6,7 +6,7 @@ Begin["`Private`"]
 
 SlideEvent[OptionsPattern[]] := StringTemplate["RVJSEvent[\"``\"]"][OptionValue["Id"]]
 
-Options[SlideEvent] = {"id"->"default-slide-event"}
+Options[SlideEvent] = {"Id"->"default-slide-event"}
 
 End[]
 EndPackage[]

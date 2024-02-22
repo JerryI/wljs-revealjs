@@ -16,14 +16,16 @@ StringReplace[str, {
 }]
 ];
 
-Notebook`RevealEvaluator = Function[t,
+Notebook`RevealEvaluator = Function[t, With[{hash = CreateUUID[]},
+        Block[{Global`$EvaluationContext = Join[t["EvaluationContext"], <|"ResultCellHash" -> hash|>]},
             With[{result = ProcessString[t["Data"], "Localize"->False, "Trimmer"->MTrimmer]  // ReleaseHold},
                 With[{string = If[ListQ[result], StringRiffle[Map[ToString, Select[result, (# =!= Null)&]], ""], ToString[result] ]},
-                    EventFire[Internal`Kernel`Stdout[ t["Hash"] ], "Result", <|"Data" -> string, "Meta" -> Sequence["Display"->"slide"] |> ];
+                    EventFire[Internal`Kernel`Stdout[ t["Hash"] ], "Result", <|"Data" -> string, "Meta" -> Sequence["Display"->"slide", "Hash"->hash] |> ];
                     EventFire[Internal`Kernel`Stdout[ t["Hash"] ], "Finished", True];
                 ];
             ];
-];
+        ];
+] ];
 
 
 ExpressionReplacements = {
