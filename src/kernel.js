@@ -13,8 +13,24 @@ function unicodeToChar(text) {
          });
 };
 
+const decks = {};
+
+core.SlidesInternalEvent = async (args, env) => {
+  console.log('Slide event!');
+
+  const type = await interpretate(args[0], env);
+  const data = await interpretate(args[1], env);
+
+  Object.values(decks).forEach((deck) => {
+    deck[type](data);
+  });
+}
+
+let cnt = 0;
+
 class RevealJSCell {
     envs = []
+    cnt
 
     dispose() {
 
@@ -26,6 +42,8 @@ class RevealJSCell {
           obj.dispose();
         }
       }
+
+      delete decks[this.cnt];
 
       this.deck.destroy();
     }
@@ -188,6 +206,9 @@ class RevealJSCell {
       this.deck = deck;
 
       
+
+      this.cnt = (cnt++);
+      decks[this.cnt] = deck;
 
       const runOverFe = async function () {
         for (const uid of fe) {
