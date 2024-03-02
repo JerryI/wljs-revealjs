@@ -87,7 +87,7 @@ class RevealJSCell {
 
       const r = {
         scripts: new RegExp(/\<(?:[^:]+:)?script\>.*?\<\/(?:[^:]+:)?script\>/gm),
-        events: new RegExp(/RVJSEvent\["([^"]+)"\]/g),
+        events: new RegExp(/RVJSEvent\["([^"]+)","([^"]+)"\]/g),
         fe: new RegExp(/FrontEndExecutable\[([^\[|\]]+)\]/g),
         feh: new RegExp(/FrontEndExecutableHold\[([^\[|\]]+)\]/g)
       };
@@ -107,13 +107,12 @@ class RevealJSCell {
       
       const eventReplacer = (arr) => {
         return function (match, a,b,c) {
-
   
-        let narray = string.slice(0, b).match(new RegExp(/---\n/gm));
+        let narray = string.slice(0, c).match(new RegExp(/---\n/gm));
           
         if (!Array.isArray(narray)) narray = [];
-          
-        arr[narray.length] = match.slice(11,-2);
+        
+        arr[narray.length] = [a,b];
         return '';
         }
       }
@@ -150,7 +149,7 @@ class RevealJSCell {
         console.log(Object.keys(events).includes(String(slide)));
           if (Object.keys(events).includes(String(slide))) {
             console.log(events[slide]);
-            server.kernel.emitt(events[slide], slide);
+            server.kernel.emitt(events[slide][0], slide, events[slide][1]);
           }
 
       } );
@@ -163,9 +162,9 @@ class RevealJSCell {
         setTimeout(()=>{
           blocked = false;
         }, 100);
-        server.kernel.emitt(events[x]+'-fragment-'+String(y+1), y);
+        server.kernel.emitt(events[x][0], y, 'fragment-'+String(y+1));
         console.log('fragment fire!');
-        console.log(events[x]+'-fragment-'+String(y+1));
+       
       };
 
       deck.on( 'fragmentshown', event => {
@@ -228,9 +227,7 @@ class RevealJSCell {
       };
     };
 
-      //FIXME must be an a sideeffect after slide was mounted
-      //setTimeout(runOverFe, 300);
-
+    //sideeffect
       deck.initialize().then(() => runOverFe());
 
       return this;

@@ -4,9 +4,9 @@ SlideEvent::usage = "SlideEvent[\"Id\"->\"event-uid\"] attach an event generator
 
 Begin["`Private`"]
 
-SlideEvent[OptionsPattern[]] := StringTemplate["RVJSEvent[\"``\"]"][OptionValue["Id"]]
+SlideEvent[OptionsPattern[]] := StringTemplate["RVJSEvent[\"``\",\"``\"]"][OptionValue["Id"], OptionValue["Pattern"] ]
 
-Options[SlideEvent] = {"Id"->"default-slide-event"}
+Options[SlideEvent] = {"Id"->"default-slide-event", "Pattern"->"Slide"}
 
 End[]
 EndPackage[]
