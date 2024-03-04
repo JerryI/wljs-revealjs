@@ -5,12 +5,12 @@
   "scripts": {
     "build": "node --max-old-space-size=8192 ./node_modules/.bin/rollup --config rollup.config.mjs",
     "restore": "mkdir _temp && cd _temp && git clone https://github.com/JerryI/wljs-revealjs && mv wljs-revealjs/.git ../.git && cd .. && rm -rf _temp"
- 
   },
   "defaultPackage": true,
   "wljs-meta": {
     "frontend": "src/Frontend.wl",
     "kernel": "src/Kernel.wl",
+    "minjs": "dist/kernel.min.js",
     "js": "dist/kernel.js",
     "styles": [
       "dist/reveal.css",
@@ -29,6 +29,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "reveal.js": "^4.5.0",
     "reveal.js-math": "^1.0.0",
     "rollup": "^3.21.6"
