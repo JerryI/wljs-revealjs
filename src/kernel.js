@@ -185,6 +185,8 @@ class RevealJSCell {
        
       };
 
+
+
       deck.on( 'fragmentshown', event => {
         const state = deck.getState();
    

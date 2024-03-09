@@ -17,6 +17,15 @@
     margin-bottom: 0.5em;
 }
 
+img.fragment.fade-out {
+  text-align: center;
+  /* justify-content: center; */
+  margin-left: auto;
+  margin-right: auto;
+  /* margin-top: auto; */
+  /* margin-bottom: auto; */
+}
+
 .reveal-fixed-height {
   height: 380px;
 }
