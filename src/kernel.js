@@ -6,6 +6,23 @@ import {RevealDrawer} from './drawer/drawer.js'
 
 import KaTeX from 'reveal.js/plugin/math/math.esm.js'
 
+const pasteFile = {
+  transaction: (ev, view, id, length) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      const channel = view.dom.ocellref.origin.channel;
+      server._emitt(channel, `<|"Channel"->"${id}", "Length"->${length}, "CellType"->"md"|>`, 'Forwarded["CM:PasteEvent"]');
+    }
+  },
+
+  file: (ev, view, id, name, result) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      server.emitt(id, `<|"Data"->"${result}", "Name"->"${name}"|>`, 'File');
+    }
+  }
+}
+
 const pasteDrop = {
   transaction: (ev, view, id, length) => {
     console.log(view.dom.ocellref);
@@ -277,7 +294,7 @@ class RevealJSCell {
   
   window.SupportedLanguages.push({
     check: (r) => {return(r[0] === '.slide' || r[0] === '.slides')},
-    plugins: [window.markdown(), window.DropPasteHandlers(pasteDrop)],
+    plugins: [window.markdown(), window.DropPasteHandlers(pasteDrop, pasteFile)],
     name: window.markdownLanguage.name
   });
 
