@@ -11,7 +11,7 @@
 .slide-number {
   bottom: 0;
   position: absolute;
-  font-size: small;
+  font-size: 1.5rem;
   right: 0;
   margin-right: 1em;
   margin-bottom: 0.5em;
@@ -48,37 +48,50 @@ height: 380px;
 }
 
 .reveal h1 {
-font-size: 3rem;
+font-size: 3.5rem;
 line-height: 1;
 padding-bottom: 1.5rem;
 }
 
 .reveal h2 {
-font-size: 2.25rem; /* 36px */
-line-height: 2.5rem; /* 40px */
+font-size: 2.55rem; /* 36px */
+line-height: 2.6rem; /* 40px */
 padding-bottom: 1.25rem;
 }
 
 .reveal h3 {
-font-size: 1.875rem; /* 30px */
+font-size: 2.275rem; /* 30px */
 line-height: 2.25rem; /* 36px */
 padding-bottom: 1rem;
 }
 
 .reveal h4 {
-font-size: 1.5rem; /* 36px */
+font-size: 2.0rem; /* 36px */
 line-height: 2rem; /* 40px */
 padding-bottom: 0.75rem;
 }
 
-.reveal h5 {
-font-size: 1.25rem; /* 36px */
-line-height: 1.75rem; /* 40px */
-padding-bottom: 0.5rem;
+.reveal ul {
+  list-style-type:disc;
+  display: inline-block;
+  text-align:left;
 }
 
-.reveal p {
-font-size: 1rem; /* 16px */
-line-height: 1.5rem; /* 24px */
+.reveal ol {
+  list-style-type:decimal;
+  display: inline-block;
+  text-align:left;
 }
+
+.reveal ol li {
+  padding-left:1rem
+}
+
+
+.reveal {
+  font-size: 1.75rem;
+  line-height:1.25;
+}
+
+.reveal p {font-size: 1.75rem; /* 16px */line-height: 1.15; /* 24px */}
 
