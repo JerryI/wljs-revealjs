@@ -25,6 +25,10 @@ margin-left: auto;
 margin-right: auto;
 }
 
+.reveal .cm-widgetBuffer {
+  padding:0;
+}
+
 .slide-frontend-object {
 text-align: center;
 /* justify-content: center; */
