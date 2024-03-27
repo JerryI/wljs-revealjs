@@ -31,14 +31,21 @@ Notebook`RevealEvaluator = Function[t, With[{hash = CreateUUID[]},
 ExpressionReplacements = {
     Graphics[opts__] :> CreateFrontEndObject[Graphics[opts]], 
     Graphics3D[opts__] :> CreateFrontEndObject[Graphics3D[opts]], 
-    Image[opts__] :> CreateFrontEndObject[Image[opts]]
+    Image[opts__] :> CreateFrontEndObject[Image[opts]],
+    s_Sound :> CreateFrontEndObject[s]
 } // Quiet;
 
-JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "View"], CreateFrontEndObject[ assoc["View"]], EventObject[assoc] ]
-JerryI`WLX`Private`IdentityTransform[x_] := x /. ExpressionReplacements
 
-ListLinePlotly /: JerryI`WLX`Private`IdentityTransform[ListLinePlotly[args__]] := CreateFrontEndObject[ListLinePlotly[args]]
-ListPlotly /: JerryI`WLX`Private`IdentityTransform[ListPlotly[args__]] := CreateFrontEndObject[ListPlotly[args]]
+(*JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "View"], CreateFrontEndObject[ assoc["View"]], EventObject[assoc] ]*)
+EventObject /: MakeBoxes[EventObject[assoc_], WLXForm] := If[KeyExistsQ[assoc, "View"],
+    With[{o = CreateFrontEndObject[assoc["View"]]},
+        MakeBoxes[o, WLXForm]
+    ]
+,
+    EventObject[assoc]
+]
+
+JerryI`WLX`Private`IdentityTransform[x_] := ToBoxes[x /. ExpressionReplacements, WLXForm]
 
 End[]
 
