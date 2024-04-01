@@ -1,7 +1,6 @@
 # RevealJS Plugin
-*An extension for [WLJS-Editor](https://github.com/JerryI/wljs-editor) that allows you to make slides and an entire presentation using Markdown, HTML, JS, Wolfram Language or WLX*
+*An extension for [WLJS Frontend](https://github.com/JerryI/wolfram-js-frontend) that allows you to make slides and an entire presentation using Markdown, HTML, JS, Wolfram Language or WLX*
 
-__Alpha preview__
 
 *if you have __no idea about__ titles mentioned, __please visit [the official page](https://github.com/JerryI/wolfram-js-frontend)__ ;)*
 
@@ -71,7 +70,6 @@ Or even some graphics, like
 ## Plugins
 The package uses also external plugins 
 - [pointer](https://github.com/burnpiro/reveal-pointer) (use `q` to toggle)
-- [drawing board](https://github.com/burnpiro/reveal-drawer) (use `t` to toggle the board and then `d` to draw)
 
 ## Installation
 already a core component!
