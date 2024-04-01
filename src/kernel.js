@@ -6,6 +6,41 @@ import {RevealDrawer} from './drawer/drawer.js'
 
 import KaTeX from 'reveal.js/plugin/math/math.esm.js'
 
+const pasteFile = {
+  transaction: (ev, view, id, length) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      const channel = view.dom.ocellref.origin.channel;
+      server._emitt(channel, `<|"Channel"->"${id}", "Length"->${length}, "CellType"->"md"|>`, 'Forwarded["CM:PasteEvent"]');
+    }
+  },
+
+  file: (ev, view, id, name, result) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      server.emitt(id, `<|"Data"->"${result}", "Name"->"${name}"|>`, 'File');
+    }
+  }
+}
+
+const pasteDrop = {
+  transaction: (ev, view, id, length) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      const channel = view.dom.ocellref.origin.channel;
+      server._emitt(channel, `<|"Channel"->"${id}", "Length"->${length}, "CellType"->"md"|>`, 'Forwarded["CM:DropEvent"]');
+    }
+  },
+
+  file: (ev, view, id, name, result) => {
+    console.log(view.dom.ocellref);
+    if (view.dom.ocellref) {
+      server.emitt(id, `<|"Data"->"${result}", "Name"->"${name}"|>`, 'File');
+    }
+  }
+}
+
+
 function unicodeToChar(text) {
   return text.replace(/\\:[\da-f]{4}/gi, 
          function (match) {
@@ -13,13 +48,37 @@ function unicodeToChar(text) {
          });
 };
 
+const decks = {};
+
+core.SlidesInternalEvent = async (args, env) => {
+  console.log('Slide event!');
+
+  const type = await interpretate(args[0], env);
+  const data = await interpretate(args[1], env);
+
+  Object.values(decks).forEach((deck) => {
+    deck[type](data);
+  });
+}
+
+let cnt = 0;
+
 class RevealJSCell {
-    ref = []
+    envs = []
+    cnt
 
     dispose() {
 
       console.warn('slide got disposed!');
-      this.ref.forEach((e) => e.dispose());
+      console.warn('WLX cell dispose...');
+      for (const env of this.envs) {
+        for (const obj of Object.values(env.global.stack))  {
+          console.log('dispose');
+          obj.dispose();
+        }
+      }
+
+      delete decks[this.cnt];
 
       this.deck.destroy();
     }
@@ -36,7 +95,7 @@ class RevealJSCell {
         // for embedded decks when they are in focus
         keyboardCondition: null,
         slideNumber: true,
-        plugins: [ Markdown, KaTeX, RevealPointer, RevealDrawer(self) ],
+        plugins: [ Markdown, KaTeX, RevealPointer /*, RevealDrawer(self)*/ ],
         pointer: {
           key: "q", // key to enable pointer, default "q", not case-sensitive
           color: "red", // color of a cursor, default "red" any valid CSS color
@@ -44,7 +103,7 @@ class RevealJSCell {
           pointerSize: 12, // pointer size in px, default 12
           alwaysVisible: false, // should pointer mode be always visible? default "false"
           tailLength: 10, // NOT IMPLEMENTED YET!!! how long the "tail" should be? default 10
-        },
+        }/*,
 
         drawer: {
           toggleDrawKey: "d", // (optional) key to enable drawing, default "d"
@@ -52,7 +111,7 @@ class RevealJSCell {
           colors: ["#fa1e0e", "#8ac926", "#1982c4", "#ffca3a"], // (optional) list of colors avaiable (hex color codes)
           color: "#FF0000", // (optional) color of a cursor, first color from `codes` is a default
           pathSize: 4, // (optional) path size in px, default 4
-        }
+        }*/
       } );
 
       const container = document.createElement('div');
@@ -66,7 +125,7 @@ class RevealJSCell {
       parent.element.appendChild(container);
 
       
-
+      if (!core._isWindow) parent.element.classList.add('reveal-fixed-height');
       parent.element.classList.add('padding-fix');
 
       //parent.element.style.height = "500px";
@@ -81,7 +140,7 @@ class RevealJSCell {
 
       const r = {
         scripts: new RegExp(/\<(?:[^:]+:)?script\>.*?\<\/(?:[^:]+:)?script\>/gm),
-        events: new RegExp(/RVJSEvent\["([^"]+)"\]/g),
+        events: new RegExp(/RVJSEvent\["([^"]+)","([^"]+)"\]/g),
         fe: new RegExp(/FrontEndExecutable\[([^\[|\]]+)\]/g),
         feh: new RegExp(/FrontEndExecutableHold\[([^\[|\]]+)\]/g)
       };
@@ -101,13 +160,12 @@ class RevealJSCell {
       
       const eventReplacer = (arr) => {
         return function (match, a,b,c) {
-
   
-        let narray = string.slice(0, b).match(new RegExp(/---\n/gm));
+        let narray = string.slice(0, c).match(new RegExp(/---\n/gm));
           
         if (!Array.isArray(narray)) narray = [];
-          
-        arr[narray.length] = match.slice(11,-2);
+        
+        arr[narray.length] = [a,b];
         return '';
         }
       }
@@ -116,17 +174,20 @@ class RevealJSCell {
         return function (match, index) {
           const uid = match.slice(19 + offset,-1);
           fe.push(uid);
-          return `<div id="${uid}" class="slide-frontend-object"></div>`;
+          return `<div id="slide-${uid}" class="slide-frontend-object"></div>`;
         }
       }
-
-      string = string.replace('<dummy>', '').replace('</dummy>', '');
+      
+    
+      string = string.replace('<dummy >', '').replace('</dummy>', '');
 
       //extract scripts
       string = string.replace(r.scripts, replacer(scripts));
 
       //extract events
+      console.log(string);
       string = string.replace(r.events, eventReplacer(events));
+      console.log(events);
 
       //extract FE objects
       string = string.replace(r.fe, feReplacer(fe));
@@ -138,8 +199,10 @@ class RevealJSCell {
         console.log(slide);
         if (event.previousSlide == event.currentSlide) return;
 
-          if (slide in events) {
-            server.emitt(events[slide], slide);
+        console.log(Object.keys(events).includes(String(slide)));
+          if (Object.keys(events).includes(String(slide))) {
+            console.log(events[slide]);
+            server.kernel.emitt(events[slide][0], slide, events[slide][1]);
           }
 
       } );
@@ -152,13 +215,17 @@ class RevealJSCell {
         setTimeout(()=>{
           blocked = false;
         }, 100);
-        server.emitt(events[x]+'-fragment-'+String(y+1), y)
+        server.kernel.emitt(events[x][0], y, 'fragment-'+String(y+1));
+        console.log('fragment fire!');
+       
       };
+
+
 
       deck.on( 'fragmentshown', event => {
         const state = deck.getState();
    
-        if (state.indexh in events) {
+        if (Object.keys(events).includes(String(state.indexh))) {
           fragmentFire(state.indexh, state.indexf);
         }
       } );
@@ -166,6 +233,7 @@ class RevealJSCell {
       
       
       slides.innerHTML = unicodeToChar(string);
+  
 
       const scriptHolder = document.createElement('div');
       parent.element.appendChild(scriptHolder);
@@ -174,23 +242,51 @@ class RevealJSCell {
       
       this.deck = deck;
 
-      deck.initialize();
+      
 
-      fe.forEach((obj, i) => {
-        setTimeout(async () => {
+      this.cnt = (cnt++);
+      decks[this.cnt] = deck;
+
+      const runOverFe = async function () {
+        for (const uid of fe) {
+
           const cuid = Date.now() + Math.floor(Math.random() * 10009);
           var global = {call: cuid};
-      
-          let env = {global: global, element: document.getElementById(obj)}; //Created in CM6
-          console.log("CM6: creating an object with key "+this.name);
-          const fobj = new ExecutableObject(obj, env);
-          fobj.execute()     
-      
-          self.ref.push(fobj);          
-        }, (i+1) * 200)
-      });
 
+          console.warn('loading executable on a slide...');
+          console.log(uid);
+          console.log(document.getElementById(`slide-${uid}`));
+          
       
+          let env = {global: global, element: document.getElementById(`slide-${uid}`)}; 
+          console.log("Slides: creating an object");
+
+
+          console.log('forntend executable');
+
+          let obj;
+          console.log('check cache');
+          if (ObjectHashMap[uid]) {
+              obj = ObjectHashMap[uid];
+          } else {
+              obj = new ObjectStorage(uid);
+          }
+          console.log(obj);
+      
+          const copy = env;
+          const store = await obj.get();
+          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
+          instance.assignScope(copy);
+          obj.assign(instance);
+      
+          instance.execute();          
+      
+          self.envs.push(env);          
+      };
+    };
+
+    //sideeffect
+      deck.initialize().then(() => runOverFe());
 
       return this;
     }
@@ -198,7 +294,7 @@ class RevealJSCell {
   
   window.SupportedLanguages.push({
     check: (r) => {return(r[0] === '.slide' || r[0] === '.slides')},
-    plugins: [window.markdown()],
+    plugins: [window.markdown(), window.DropPasteHandlers(pasteDrop, pasteFile)],
     name: window.markdownLanguage.name
   });
 
