@@ -302,7 +302,21 @@ class RevealJSCell {
       }    };
 
     //sideeffect
-      deck.initialize().then(() => runOverFe());
+      deck.initialize().then(() => {
+        runOverFe();
+        //when everyhting is mounted. fire an event for the first slide
+        //Mouted event
+        for (const key of Object.keys(events)) {
+          server.kernel.emitt(events[key][0], 'True', 'Mounted');
+        }
+
+        //for the first slide
+
+        if (Object.keys(events).includes(String(0))) {
+          server.kernel.emitt(events[0][0], 0, events[0][1]);
+        }
+        
+      });
 
       return this;
     }

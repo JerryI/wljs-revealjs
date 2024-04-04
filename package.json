@@ -1,6 +1,6 @@
 {
   "name": "wljs-revealjs",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Presentation support based on RevealJS and WLX",
   "scripts": {
     "build": "node --max-old-space-size=8192 ./node_modules/.bin/rollup --config rollup.config.mjs",
@@ -30,6 +30,7 @@
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "katex": "^0.16.10",
     "reveal.js": "^4.5.0",
     "reveal.js-math": "^1.0.0",
     "rollup": "^3.21.6"
