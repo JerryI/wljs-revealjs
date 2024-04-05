@@ -1,10 +1,10 @@
 import Reveal from 'reveal.js';
-import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
+import Markdown from './markdown/markdown.js';
 
 import {RevealPointer} from './pointer/pointer.js'
 import {RevealDrawer} from './drawer/drawer.js'
 
-import KaTeX from 'reveal.js/plugin/math/math.esm.js'
+import {KaTeX} from './katex/katex.js'
 
 const pasteFile = {
   transaction: (ev, view, id, length) => {

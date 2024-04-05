@@ -33,22 +33,6 @@ export const KaTeX = () => {
 	 * Loads a JavaScript file and returns a Promise for when it is loaded
 	 * Credits: https://aaronsmith.online/easily-load-an-external-script-using-javascript/
 	 */
-	const loadScript = src => {
-		return new Promise((resolve, reject) => {
-			const script = document.createElement('script')
-			script.type = 'text/javascript'
-			script.onload = resolve
-			script.onerror = reject
-			script.src = src
-			document.head.append(script)
-		})
-	};
-
-	async function loadScripts(urls) {
-		for(const url of urls) {
-			await loadScript(url);
-		}
-	}
 
 	return {
 		id: 'katex',
@@ -73,7 +57,7 @@ export const KaTeX = () => {
 			// For some reason dynamically loading with defer attribute doesn't result in the expected behavior, the below code does
 			if (!renderMathInElement) {
 				window.interpretate.shared.katex.load().then(() => {
-					renderMathInElement = window.interpretate.shared.katex.autorender.default;
+					renderMathInElement = window.interpretate.shared.katex.autorender;
 					console.log(renderMathInElement);
 
 					if( deck.isReady() ) {
@@ -84,7 +68,7 @@ export const KaTeX = () => {
 					}
 				})
 			} else {
-				renderMathInElement = window.interpretate.shared.katex.autorender.default;
+				renderMathInElement = window.interpretate.shared.katex.autorender;
 				console.log(renderMathInElement);
 
 				if( deck.isReady() ) {
