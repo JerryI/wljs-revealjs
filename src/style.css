@@ -24,6 +24,10 @@
   height: 100%;
 }
 
+.slides > section {
+  height: 100%;
+}
+
 
 .backgrounds {
   top: 0;
