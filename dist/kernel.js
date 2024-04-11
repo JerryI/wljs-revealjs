@@ -787,7 +787,7 @@ class RevealJSCell {
         if (event.previousSlide == event.currentSlide) return;
 
         if (previousSlide !== false) {
-          server.kernel.emitt(events[previousSlide][0], previousSlide, 'Left');
+          server.kernel.emitt(events[previousSlide][0], slide - previousSlide, 'Left');
           previousSlide = false;
         }
 
