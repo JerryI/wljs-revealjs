@@ -65,11 +65,18 @@ let cnt = 0;
 
 class RevealJSCell {
     envs = []
+    events
     cnt
 
     dispose() {
 
+
       console.warn('slide got disposed!');
+
+      for (const key of Object.keys(this.events)) {
+        server.kernel.emitt(this.events[key][0], 'True', 'Destroy');
+      }
+
       console.warn('WLX cell dispose...');
       for (const env of this.envs) {
         for (const obj of Object.values(env.global.stack))  {
@@ -193,16 +200,24 @@ class RevealJSCell {
       string = string.replace(r.fe, feReplacer(fe));
       string = string.replace(r.feh, feReplacer(fe, 4));
 
+      let previousSlide = false;
+
       deck.on( 'slidechanged', event => {
         // event.previousSlide, event.currentSlide, event.indexh, event.indexv
         const slide = event.indexh;
         console.log(slide);
         if (event.previousSlide == event.currentSlide) return;
 
+        if (previousSlide !== false) {
+          server.kernel.emitt(events[previousSlide][0], previousSlide, 'Left');
+          previousSlide = false;
+        }
+
         console.log(Object.keys(events).includes(String(slide)));
           if (Object.keys(events).includes(String(slide))) {
             console.log(events[slide]);
             server.kernel.emitt(events[slide][0], slide, events[slide][1]);
+            previousSlide = slide;
           }
 
       } );
@@ -294,10 +309,13 @@ class RevealJSCell {
           server.kernel.emitt(events[key][0], 'True', 'Mounted');
         }
 
+        self.events = events;
+
         //for the first slide
 
         if (Object.keys(events).includes(String(0))) {
           server.kernel.emitt(events[0][0], 0, events[0][1]);
+          previousSlide = 0;
         }
         
       });
