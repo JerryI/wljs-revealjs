@@ -28,12 +28,14 @@ Notebook`RevealEvaluator = Function[t, With[{hash = CreateUUID[]},
 ] ];
 
 System`DatasetWrapper;
+System`AudioWrapper;
 
 ExpressionReplacements = {
-    Graphics[opts__] :> CreateFrontEndObject[Graphics[opts]], 
-    Graphics3D[opts__] :> CreateFrontEndObject[Graphics3D[opts]], 
-    Image[opts__] :> CreateFrontEndObject[Image[opts]],
-    s_Sound :> CreateFrontEndObject[s],
+    g2d_Graphics :> CreateFrontEndObject[g2d ], 
+    g3d_Graphics3D :> CreateFrontEndObject[g3d ], 
+    i_Image :> CreateFrontEndObject[i ],
+    s_Sound :> CreateFrontEndObject[s ],
+    s_Audio :> AudioWrapper[s],
     d_Dataset :> DatasetWrapper[d]
 } // Quiet;
 
