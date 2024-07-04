@@ -48,7 +48,7 @@ export const KaTeX = () => {
 
 
 			const renderMath = () => {
-				renderMathInElement(reveal.getSlidesElement(), katexOptions);
+				renderMathInElement(reveal.getSlidesElement(), defaultOptions);
 				deck.layout();
 			}
 

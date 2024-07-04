@@ -17,8 +17,8 @@ const e=(e,t)=>{for(let i in t)e[i]=t[i];return e},t=(e,t)=>Array.from(e.querySe
 let marked;
 
 
-await window.interpretate.shared.marked.load();
-marked = window.interpretate.shared.marked.default;
+await window.interpretate.shared.Marked.load();
+marked = new window.interpretate.shared.Marked.default();
 
 
 
@@ -133,7 +133,7 @@ const Plugin = () => {
 		const notesMatch = content.split( new RegExp( options.notesSeparator, 'mgi' ) );
 
 		if( notesMatch.length === 2 ) {
-			content = notesMatch[0] + '<aside class="notes">' + marked(notesMatch[1].trim()) + '</aside>';
+			content = notesMatch[0] + '<aside class="notes">' + marked.parse(notesMatch[1].trim()) + '</aside>';
 		}
 
 		// prevent script end tags in the content from interfering
@@ -404,7 +404,7 @@ const Plugin = () => {
 			const notes = section.querySelector( 'aside.notes' );
 			const markdown = getMarkdownFromSlide( section );
 
-			section.innerHTML = marked( markdown );
+			section.innerHTML = marked.parse( markdown );
 			addAttributes( 	section, section, null, section.getAttribute( 'data-element-attributes' ) ||
 							section.parentNode.getAttribute( 'data-element-attributes' ) ||
 							DEFAULT_ELEMENT_ATTRIBUTES_SEPARATOR,
@@ -543,12 +543,11 @@ const KaTeX = () => {
 
 			let revealOptions = deck.getConfig().katex || {};
 
-			let options = {...defaultOptions, ...revealOptions};
-			const {local, version, extensions, ...katexOptions} = options;
+			({...defaultOptions, ...revealOptions});
 
 
 			const renderMath = () => {
-				renderMathInElement(reveal.getSlidesElement(), katexOptions);
+				renderMathInElement(reveal.getSlidesElement(), defaultOptions);
 				deck.layout();
 			};
 
