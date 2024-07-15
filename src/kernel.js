@@ -1,10 +1,10 @@
 import Reveal from 'reveal.js';
-import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
+import Markdown from './markdown/markdown.js';
 
 import {RevealPointer} from './pointer/pointer.js'
 import {RevealDrawer} from './drawer/drawer.js'
 
-import KaTeX from 'reveal.js/plugin/math/math.esm.js'
+import {KaTeX} from './katex/katex.js'
 
 const pasteFile = {
   transaction: (ev, view, id, length) => {
@@ -65,11 +65,18 @@ let cnt = 0;
 
 class RevealJSCell {
     envs = []
+    events
     cnt
 
     dispose() {
 
+
       console.warn('slide got disposed!');
+
+      for (const key of Object.keys(this.events)) {
+        server.kernel.emitt(this.events[key][0], 'True', 'Destroy');
+      }
+
       console.warn('WLX cell dispose...');
       for (const env of this.envs) {
         for (const obj of Object.values(env.global.stack))  {
@@ -193,16 +200,24 @@ class RevealJSCell {
       string = string.replace(r.fe, feReplacer(fe));
       string = string.replace(r.feh, feReplacer(fe, 4));
 
+      let previousSlide = false;
+
       deck.on( 'slidechanged', event => {
         // event.previousSlide, event.currentSlide, event.indexh, event.indexv
         const slide = event.indexh;
         console.log(slide);
         if (event.previousSlide == event.currentSlide) return;
 
+        if (previousSlide !== false) {
+          server.kernel.emitt(events[previousSlide][0], slide - previousSlide, 'Left');
+          previousSlide = false;
+        }
+
         console.log(Object.keys(events).includes(String(slide)));
           if (Object.keys(events).includes(String(slide))) {
             console.log(events[slide]);
             server.kernel.emitt(events[slide][0], slide, events[slide][1]);
+            previousSlide = slide;
           }
 
       } );
@@ -286,7 +301,24 @@ class RevealJSCell {
     };
 
     //sideeffect
-      deck.initialize().then(() => runOverFe());
+      deck.initialize().then(() => {
+        runOverFe();
+        //when everyhting is mounted. fire an event for the first slide
+        //Mouted event
+        for (const key of Object.keys(events)) {
+          server.kernel.emitt(events[key][0], 'True', 'Mounted');
+        }
+
+        self.events = events;
+
+        //for the first slide
+
+        if (Object.keys(events).includes(String(0))) {
+          server.kernel.emitt(events[0][0], 0, events[0][1]);
+          previousSlide = 0;
+        }
+        
+      });
 
       return this;
     }
@@ -303,3 +335,171 @@ class RevealJSCell {
   window.SupportedCells['slide'] = {
     view: RevealJSCell
   };
+
+
+  class RevealJSCellPrinted {
+    envs = []
+    events
+    cnt
+    
+    constructor(parent, data) {
+      const self = this;
+      let deck = new Reveal(parent.element, {
+        embedded: true,
+        keyboard: true,
+        pdfMaxPagesPerSlide: 1,
+        pdfSeparateFragments: true,
+        // Optional function that blocks keyboard events when retuning false
+        //
+        // If you set this to 'focused', we will only capture keyboard events
+        // for embedded decks when they are in focus
+        keyboardCondition: null,
+        slideNumber: true,
+        plugins: [ Markdown, KaTeX /*, RevealDrawer(self)*/ ]
+      } );
+
+      const container = document.createElement('div');
+      container.classList.add('reveal');
+
+      const slides = document.createElement('div');
+      slides.classList.add('slides');
+
+      container.appendChild(slides);
+
+      parent.element.appendChild(container);
+
+      
+      //if (!core._isWindow) parent.element.classList.add('reveal-fixed-height');
+      //parent.element.classList.add('padding-fix');
+
+      //parent.element.style.height = "500px";
+
+      let string = `
+      <section data-markdown>
+      <textarea data-template>
+          ${data}
+      </textarea>
+      </section>      
+      `;
+
+      const r = {
+        scripts: new RegExp(/\<(?:[^:]+:)?script\>.*?\<\/(?:[^:]+:)?script\>/gm),
+        events: new RegExp(/RVJSEvent\["([^"]+)","([^"]+)"\]/g),
+        fe: new RegExp(/FrontEndExecutable\[([^\[|\]]+)\]/g),
+        feh: new RegExp(/FrontEndExecutableHold\[([^\[|\]]+)\]/g)
+      };
+      
+      const scripts = [];
+      
+      const replacer = (arr) => {
+        return function (match, p1, p2, /* …, */ pN, offset, string, groups) {
+        arr.push(match);
+        return '';
+        }
+      }
+
+      const events = {};
+      const fe = [];
+      //string.match(new RegExp(/---\n/gm)).length
+      
+      const eventReplacer = (arr) => {
+        return function (match, a,b,c) {
+  
+        let narray = string.slice(0, c).match(new RegExp(/---\n/gm));
+          
+        if (!Array.isArray(narray)) narray = [];
+        
+        arr[narray.length] = [a,b];
+        return '';
+        }
+      }
+
+      const feReplacer = (fe, offset=0) => {
+        return function (match, index) {
+          const uid = match.slice(19 + offset,-1);
+          fe.push(uid);
+          return `<div id="slide-${uid}" class="slide-frontend-object"></div>`;
+        }
+      }
+      
+    
+      string = string.replace('<dummy >', '').replace('</dummy>', '');
+
+      //extract scripts
+      string = string.replace(r.scripts, replacer(scripts));
+
+      //extract events
+      console.log(string);
+      string = string.replace(r.events, eventReplacer(events));
+      console.log(events);
+
+      //extract FE objects
+      string = string.replace(r.fe, feReplacer(fe));
+      string = string.replace(r.feh, feReplacer(fe, 4));
+      
+      slides.innerHTML = unicodeToChar(string);
+  
+
+      const scriptHolder = document.createElement('div');
+      parent.element.appendChild(scriptHolder);
+
+      setInnerHTML(scriptHolder, scripts.join(''));
+      
+      this.deck = deck;
+
+      
+
+      this.cnt = (cnt++);
+      decks[this.cnt] = deck;
+
+      const runOverFe = async function () {
+        for (const uid of fe) {
+
+          const cuid = Date.now() + Math.floor(Math.random() * 10009);
+          var global = {call: cuid};
+
+          console.warn('loading executable on a slide...');
+          console.log(uid);
+          console.log(document.getElementById(`slide-${uid}`));
+          
+      
+          let env = {global: global, element: document.getElementById(`slide-${uid}`)}; 
+          console.log("Slides: creating an object");
+
+
+          console.log('forntend executable');
+
+          let obj;
+          console.log('check cache');
+          if (ObjectHashMap[uid]) {
+              obj = ObjectHashMap[uid];
+          } else {
+              obj = new ObjectStorage(uid);
+          }
+          console.log(obj);
+      
+          const copy = env;
+          const store = await obj.get();
+          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
+          instance.assignScope(copy);
+          obj.assign(instance);
+      
+          instance.execute();          
+      
+          self.envs.push(env);          
+      };
+    };
+
+    //sideeffect
+      deck.initialize().then(() => {
+        runOverFe();
+        self.events = events;
+      });
+
+      return this;
+    }
+  }  
+
+  window.SupportedCells['printslide'] = {
+    view: RevealJSCellPrinted
+  };  
