@@ -19,7 +19,8 @@
       "src/pointer/pointer.css"
     ],
     "priority": 999,
-    "category": "Cell types"
+    "category": "Cell types",
+    "cellExportRequired": true
   },
   "repository": {
     "type": "git",
