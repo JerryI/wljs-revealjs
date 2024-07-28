@@ -899,11 +899,13 @@ class RevealJSCell {
       return this;
     }
   }
+
+  const codemirror = window.SupportedCells['codemirror'].context; 
   
   window.SupportedLanguages.push({
     check: (r) => {return(r[0] === '.slide' || r[0] === '.slides')},
-    plugins: [window.markdown(), window.DropPasteHandlers(pasteDrop, pasteFile)],
-    name: window.markdownLanguage.name
+    plugins: [codemirror.markdown(), codemirror.DropPasteHandlers(pasteDrop, pasteFile)],
+    name: codemirror.markdownLanguage.name
   });
 
   
