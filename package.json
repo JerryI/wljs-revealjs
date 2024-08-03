@@ -18,7 +18,7 @@
       "src/drawer/drawer.css",
       "src/pointer/pointer.css"
     ],
-    "priority": 999,
+    "priority": 980,
     "category": "Cell types",
     "cellExportRequired": true
   },
