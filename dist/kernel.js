@@ -867,7 +867,7 @@ class RevealJSCell {
       
           const copy = env;
           const store = await obj.get();
-          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
+          const instance = new ExecutableObject('slides-static-'+uuidv4(), copy, store, true);
           instance.assignScope(copy);
           obj.assign(instance);
       
@@ -1058,7 +1058,7 @@ class RevealJSCell {
       
           const copy = env;
           const store = await obj.get();
-          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store);
+          const instance = new ExecutableObject('slides-stored-'+uuidv4(), copy, store, true);
           instance.assignScope(copy);
           obj.assign(instance);
       
