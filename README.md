@@ -10,6 +10,9 @@ The core library is [RevealJS](https://revealjs.com), that is running in Markdow
 
 see the [**full demo**](https://youtu.be/7cEYJG7nk7U?si=IzYInhddG66pNUHp)
 
+> This README __does not cover all features__. Please read [docs](https://jerryi.github.io/wljs-docs/)
+
+
 ## Making slides using Markdown
 
 To create a slide type in a new cell
@@ -67,9 +70,20 @@ Or even some graphics, like
 
 ![](imgs/Screenshot%202023-09-01%20at%2018.41.08.png)
 
-## Plugins
-The package uses also external plugins 
-- [pointer](https://github.com/burnpiro/reveal-pointer) (use `q` to toggle)
+
+
+## Packages used
+
+✨ Thank these amazing people  ✨
+
+- [Reveal](https://revealjs.com)
+- [katex](https://katex.org/)
+- [marked](https://marked.js.org/using_advanced#options)
+- [mathjax3](https://www.mathjax.org/)
+- [latexanimation](https://github.com/CianLM/reveal-animated-latex) 
+- [pointer](https://github.com/burnpiro/reveal-pointer) (use `q` to toggle) 
+
+
 
 ## Installation
 already a core component!

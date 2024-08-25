@@ -50,6 +50,8 @@ function unicodeToChar(text) {
 
 const decks = {};
 
+let JaxLoaded = false;
+
 core.SlidesInternalEvent = async (args, env) => {
   console.log('Slide event!');
 
@@ -136,6 +138,8 @@ class RevealJSCell {
       parent.element.classList.add('padding-fix');
 
       //parent.element.style.height = "500px";
+
+    
 
       let string = `
       <section data-markdown>
@@ -300,7 +304,8 @@ class RevealJSCell {
       };
     };
 
-    //sideeffect
+    const startPresentation = () => {
+      console.log('Start the presentation');
       deck.initialize().then(() => {
         runOverFe();
         //when everyhting is mounted. fire an event for the first slide
@@ -319,6 +324,29 @@ class RevealJSCell {
         }
         
       });
+    }
+
+    //sideeffect
+
+    //if mathjax needed
+    if (JaxLoaded) {
+      startPresentation();
+    } else {
+      //console.log('Test it');
+      if (new RegExp(/data-eq-/gm).exec(data)) {
+        JaxLoaded = true;
+        
+        import('./katex/mathjaxsvg.js').then(() => {
+          console.log('Jax Loaded');
+          startPresentation();
+        });
+
+      } else {
+        startPresentation();
+      }
+    }
+
+      
 
       return this;
     }
