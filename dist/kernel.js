@@ -648,7 +648,7 @@ function slide_gradient(rand_id, viewBox, str, gradient, duration) {
 
 const extractOpts = (parent) => {
 	return [
-		parent.dataset.eqGradient ? JSON.parse(parent.dataset.eqGradient) : [],
+		parent.dataset.eqGradient ? JSON.parse(parent.dataset.eqGradient.replaceAll("'", '"')) : [],
 		parent.dataset.eqColorPrecess == "true",
 		parent.dataset.eqSpeed ? parseFloat(parent.dataset.eqSpeed) : 0.3,
 		parent.dataset.eqDelay ? parseFloat(parent.dataset.eqDelay) : 0,
