@@ -670,7 +670,7 @@ const applyPlaceholder = (svg, span, opts) => {
 	span.firstChild.classList.add('mt-6', 'mb-6', 'ml-auto', 'mr-auto', 'opacity-0');
 };
 
-const manimTags = {'eqMathjax': false, 'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0};
+const manimTags = {'eqStatic': false,  'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0};
 
 const KaTeX = () => {
 	let deck;
@@ -701,6 +701,13 @@ const KaTeX = () => {
 			const svg = MathJax.tex2svg(math.data, o);
 			const svg_content = svg.innerHTML;
 			svg.remove();
+
+			if (parent.dataset.eqStatic) {
+				span.innerHTML = svg_content;
+				span.firstChild.classList.add('mt-6', 'mb-6', 'ml-auto', 'mr-auto');
+				fragment.appendChild(span);
+				return true;
+			}
 
 			const options = extractOpts(parent);
 

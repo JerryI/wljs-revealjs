@@ -164,7 +164,7 @@ const applyPlaceholder = (svg, span, opts) => {
 
 let JaxLoaded = false;
 
-const manimTags = {'eqMathjax': false, 'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0}
+const manimTags = {'eqStatic': false,  'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0}
 
 export const KaTeX = () => {
 	let deck;
@@ -195,6 +195,13 @@ export const KaTeX = () => {
 			const svg = MathJax.tex2svg(math.data, o);
 			const svg_content = svg.innerHTML;
 			svg.remove();
+
+			if (parent.dataset.eqStatic) {
+				span.innerHTML = svg_content;
+				span.firstChild.classList.add('mt-6', 'mb-6', 'ml-auto', 'mr-auto');
+				fragment.appendChild(span);
+				return true;
+			}
 
 			const options = extractOpts(parent);
 
