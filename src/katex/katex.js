@@ -164,7 +164,7 @@ const applyPlaceholder = (svg, span, opts) => {
 
 let JaxLoaded = false;
 
-const manimTags = {'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0}
+const manimTags = {'eqMathjax': false, 'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0}
 
 export const KaTeX = () => {
 	let deck;

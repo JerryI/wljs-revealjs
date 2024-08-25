@@ -670,7 +670,7 @@ const applyPlaceholder = (svg, span, opts) => {
 	span.firstChild.classList.add('mt-6', 'mb-6', 'ml-auto', 'mr-auto', 'opacity-0');
 };
 
-const manimTags = {'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0};
+const manimTags = {'eqMathjax': false, 'eqSpeed':0.3, 'eqGradient':[], 'eqColorPrecess':false, 'eqDelay':0};
 
 const KaTeX = () => {
 	let deck;
