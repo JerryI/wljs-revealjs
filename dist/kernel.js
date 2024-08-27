@@ -1163,7 +1163,7 @@ class RevealJSCell {
       if (new RegExp(/data-eq-/gm).exec(data)) {
         JaxLoaded = true;
         
-        import('./mathjaxsvg-2f683b48.js').then(function (n) { return n.m; }).then(() => {
+        import('./mathjaxsvg-2618f7c3.js').then(function (n) { return n.m; }).then(() => {
           console.log('Jax Loaded');
           startPresentation();
         });

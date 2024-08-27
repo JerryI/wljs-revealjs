@@ -8,6 +8,8 @@
   color: rgba(58, 28, 60, 0.5);
 }  
 
+
+
 @keyframes line-anim {
   to {
       stroke-dashoffset: 0
