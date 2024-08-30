@@ -127,7 +127,8 @@ padding-bottom: 0.75rem;
 }
 
 .reveal ol li {
-  padding-left:1rem
+  padding-left:1rem;
+  list-style-type:decimal !important;
 }
 
 
