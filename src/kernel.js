@@ -298,7 +298,7 @@ class RevealJSCell {
           instance.assignScope(copy);
           obj.assign(instance);
       
-          instance.execute();          
+          await instance.execute();          
       
           self.envs.push(env);          
       };
@@ -306,8 +306,8 @@ class RevealJSCell {
 
     const startPresentation = () => {
       console.log('Start the presentation');
-      deck.initialize().then(() => {
-        runOverFe();
+      deck.initialize().then(async () => {
+        await runOverFe();
         //when everyhting is mounted. fire an event for the first slide
         //Mouted event
         for (const key of Object.keys(events)) {
@@ -322,6 +322,10 @@ class RevealJSCell {
           server.kernel.emitt(events[0][0], 0, events[0][1]);
           previousSlide = 0;
         }
+
+        setTimeout(() => {
+          deck.layout();
+        }, 100);
         
       });
     }
@@ -521,9 +525,12 @@ class RevealJSCell {
     };
 
     //sideeffect
-      deck.initialize().then(() => {
-        runOverFe();
+      deck.initialize().then(async () => {
+        await runOverFe();
         self.events = events;
+        setTimeout(() => {
+          deck.layout();
+        }, 100);
       });
 
       return this;
