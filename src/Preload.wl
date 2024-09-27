@@ -61,18 +61,16 @@ System`DatasetWrapper;
 System`AudioWrapper;
 
 ExpressionReplacements = {
-    g2d_Graphics :> CreateFrontEndObject[g2d ], 
-    g3d_Graphics3D :> CreateFrontEndObject[g3d ], 
-    i_Image :> CreateFrontEndObject[i ],
     s_Sound :> CreateFrontEndObject[s ],
     s_Audio :> AudioWrapper[s],
     d_Dataset :> DatasetWrapper[d]
 } // Quiet;
 
 
+
 (*JerryI`WLX`Private`IdentityTransform[EventObject[assoc_]] := If[KeyExistsQ[assoc, "View"], CreateFrontEndObject[ assoc["View"]], EventObject[assoc] ]*)
 EventObject /: MakeBoxes[EventObject[assoc_], WLXForm] := If[KeyExistsQ[assoc, "View"],
-    With[{o = CreateFrontEndObject[assoc["View"]]},
+    With[{o = CreateFrontEndObject[assoc["View"] ]},
         MakeBoxes[o, WLXForm]
     ]
 ,
