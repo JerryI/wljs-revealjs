@@ -76,7 +76,7 @@ class RevealJSCell {
       console.warn('slide got disposed!');
 
       for (const key of Object.keys(this.events)) {
-        server.kernel.emitt(this.events[key][0], 'True', 'Destroy');
+        this.events[key].forEach((el) => server.kernel.emitt(el[0], 'True', 'Destroy'));
       }
 
       console.warn('WLX cell dispose...');
@@ -175,8 +175,10 @@ class RevealJSCell {
         let narray = string.slice(0, c).match(new RegExp(/---\n/gm));
           
         if (!Array.isArray(narray)) narray = [];
+        const key = String(narray.length);
         
-        arr[narray.length] = [a,b];
+        if (!arr[key]) arr[key] = [];
+        arr[key].push([a,b]);
         return '';
         }
       }
@@ -213,14 +215,14 @@ class RevealJSCell {
         if (event.previousSlide == event.currentSlide) return;
 
         if (previousSlide !== false) {
-          server.kernel.emitt(events[previousSlide][0], slide - previousSlide, 'Left');
+          events[String(previousSlide)].forEach((el) => server.kernel.emitt(el[0], slide - previousSlide, 'Left'));
           previousSlide = false;
         }
 
-        console.log(Object.keys(events).includes(String(slide)));
+        //console.log(Object.keys(events).includes(String(slide)));
           if (Object.keys(events).includes(String(slide))) {
-            console.log(events[slide]);
-            server.kernel.emitt(events[slide][0], slide, events[slide][1]);
+            //console.log(events[slide]);
+            events[String(slide)].forEach((el) => server.kernel.emitt(el[0], slide, el[1]));
             previousSlide = slide;
           }
 
@@ -234,7 +236,7 @@ class RevealJSCell {
         setTimeout(()=>{
           blocked = false;
         }, 100);
-        server.kernel.emitt(events[x][0], y, 'fragment-'+String(y+1));
+        events[String(x)].forEach((el) => server.kernel.emitt(el[0], y, 'fragment-'+String(y+1)));
         console.log('fragment fire!');
        
       };
@@ -311,7 +313,7 @@ class RevealJSCell {
         //when everyhting is mounted. fire an event for the first slide
         //Mouted event
         for (const key of Object.keys(events)) {
-          server.kernel.emitt(events[key][0], 'True', 'Mounted');
+          events[key].forEach((el) => server.kernel.emitt(el[0], 'True', 'Mounted'));
         }
 
         self.events = events;
@@ -319,7 +321,7 @@ class RevealJSCell {
         //for the first slide
 
         if (Object.keys(events).includes(String(0))) {
-          server.kernel.emitt(events[0][0], 0, events[0][1]);
+          events[String(0)].forEach((el) => server.kernel.emitt(el[0], 0, el[1]));
           previousSlide = 0;
         }
 
