@@ -1135,7 +1135,15 @@ class RevealJSCell {
 
     const startPresentation = () => {
       console.log('Start the presentation');
-      deck.initialize().then(async () => {
+      deck.initialize().then(async (value) => {
+        Array.from(value.srcElement.querySelectorAll("script")).forEach( oldScript => {
+          const newScript = document.createElement("script");
+          Array.from(oldScript.attributes)
+            .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
+          newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+          oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+
         await runOverFe();
         //when everyhting is mounted. fire an event for the first slide
         //Mouted event
@@ -1353,7 +1361,15 @@ class RevealJSCell {
       }    };
 
     //sideeffect
-      deck.initialize().then(async () => {
+      deck.initialize().then(async (value) => {
+        Array.from(value.srcElement.querySelectorAll("script")).forEach( oldScript => {
+          const newScript = document.createElement("script");
+          Array.from(oldScript.attributes)
+            .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
+          newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+          oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+
         await runOverFe();
         self.events = events;
         setTimeout(() => {
