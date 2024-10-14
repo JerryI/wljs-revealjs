@@ -57,6 +57,7 @@ Notebook`RevealEvaluator = Function[t, With[{hash = CreateUUID[]},
         ];
 ] ];
 
+System`DatasetWrapper;
 
 ExpressionReplacements = {
     d_Dataset :> DatasetWrapper[d]
